@@ -12,17 +12,22 @@ public class FlashcardService {
         this.flashcardRepository = flashcardRepository;
     }
 
-    public Iterable<Flashcard> viewBookList() {
+    public Iterable<Flashcard> viewFlashcardList() {
         return flashcardRepository.findAll();
     }
 
-    public Flashcard viewFlashcardDetails(long id) {
+    public Flashcard viewFlashcardDetailsById(long id) {
         return flashcardRepository.findById(id).orElseThrow(() -> new FlashcardNotFoundException(id));
     }
 
+    public Flashcard viewFlashcardDetailsByWordEn(String wordEN){
+        return flashcardRepository.findByWordEN(wordEN).orElseThrow(() -> new FlashcardNotFoundException(wordEN));
+    }
+
     public Flashcard addFlashcardToRepository(Flashcard flashcard) {
-        if (flashcardRepository.existsById(flashcard.getId())) {
-            throw new FlashcardAlreadyExistsException(flashcard.getId());
+        if(flashcardRepository.existsByWordEN(flashcard.getWordEN())
+                && flashcardRepository.existsByWordIT(flashcard.getWordIT())){
+            throw new FlashcardAlreadyExistsException(flashcard);
         }
         return flashcardRepository.save(flashcard);
     }
@@ -35,9 +40,9 @@ public class FlashcardService {
         return flashcardRepository.findById(id)
                 .map(existingFlashcard -> {
                     var flashcardToUpdate = new Flashcard(
+                            existingFlashcard.getId(),
                             flashcard.getWordEN(),
-                            flashcard.getWordIT(),
-                            existingFlashcard.getId());
+                            flashcard.getWordIT());
                     return flashcardRepository.save(flashcardToUpdate);
                 })
                 .orElseGet(() -> addFlashcardToRepository(flashcard));

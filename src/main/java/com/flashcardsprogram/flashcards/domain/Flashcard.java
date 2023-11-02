@@ -1,6 +1,8 @@
 package com.flashcardsprogram.flashcards.domain;
 
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
+
 
 import java.util.Objects;
 
@@ -11,10 +13,10 @@ public class Flashcard {
     @NotBlank(message = "The wordEN must be defined")
     private String wordEN;
 
-    @NotBlank(message = "The id must be defined")
+    @Id
     private long id;
 
-    public Flashcard(String wordEN, String wordIT, long id) {
+    public Flashcard(long id, String wordEN, String wordIT) {
         this.wordIT = wordIT;
         this.wordEN = wordEN;
         this.id = id;
@@ -44,6 +46,7 @@ public class Flashcard {
         this.id=id;
     }
 
+
     @Override
     public String toString() {
         return wordEN + " ---------- " + wordIT;
@@ -54,11 +57,11 @@ public class Flashcard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Flashcard flashcard = (Flashcard) o;
-        return Objects.equals(id, flashcard.id);
+        return Objects.equals(wordEN, flashcard.wordEN) && Objects.equals(wordIT, flashcard.wordIT);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(wordIT, wordEN, id);
+        return Objects.hash(wordIT, wordEN);
     }
 }
